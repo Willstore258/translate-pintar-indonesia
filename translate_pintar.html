@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Translate Pintar - AI Translator</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(148, 163, 184, 0.1);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        .glow-butterfly {
+            filter: drop-shadow(0 0 6px rgba(217, 70, 239, 0.8)) drop-shadow(0 0 12px rgba(168, 85, 247, 0.5));
+        }
+    </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- Header Navigation -->
+    <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50 transition-colors">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <!-- Glowing Butterfly AI Logo -->
+                <div class="w-10 h-10 rounded-xl bg-slate-950 flex items-center justify-center border border-fuchsia-500/40 shadow-lg shadow-fuchsia-500/20 glow-butterfly p-1.5">
+                    <svg viewBox="0 0 100 100" class="w-full h-full stroke-fuchsia-400 fill-none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                        <!-- Left Wing Top -->
+                        <path d="M48 48 C 35 25, 10 10, 8 30 C 6 50, 25 55, 48 52" class="stroke-fuchsia-400" />
+                        <path d="M45 45 C 32 30, 18 20, 16 34 C 14 48, 28 50, 45 49" class="stroke-purple-300 opacity-80" stroke-width="2" />
+                        <!-- Left Wing Bottom -->
+                        <path d="M48 54 C 28 58, 10 65, 15 85 C 20 100, 42 75, 48 62" class="stroke-fuchsia-500" />
+                        <!-- Right Wing Top -->
+                        <path d="M52 48 C 65 25, 90 10, 92 30 C 94 50, 75 55, 52 52" class="stroke-fuchsia-400" />
+                        <path d="M55 45 C 68 30, 82 20, 84 34 C 86 48, 72 50, 55 49" class="stroke-purple-300 opacity-80" stroke-width="2" />
+                        <!-- Right Wing Bottom -->
+                        <path d="M52 54 C 72 58, 90 65, 85 85 C 80 100, 58 75, 52 62" class="stroke-fuchsia-500" />
+                        <!-- Body & Antennae -->
+                        <line x1="50" y1="42" x2="50" y2="68" class="stroke-white" stroke-width="4" />
+                        <path d="M50 42 C 45 32, 40 24, 34 22" class="stroke-fuchsia-300" stroke-width="2.5" />
+                        <path d="M50 42 C 55 32, 60 24, 66 22" class="stroke-fuchsia-300" stroke-width="2.5" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight text-slate-900 dark:text-white flex items-center gap-1.5">
+                        Translate Pintar 
+                        <span class="text-[10px] font-extrabold tracking-wider bg-gradient-to-r from-fuchsia-500 to-indigo-500 text-white px-1.5 py-0.5 rounded-md uppercase">AI</span>
+                    </h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Penerjemah Bahasa Berbasis AI Butterfly</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <!-- Theme Toggle Button -->
+                <button id="themeToggleBtn" class="w-9 h-9 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition flex items-center justify-center focus:outline-none" title="Ubah Mode Gelap/Terang">
+                    <i id="themeIcon" class="fa-solid fa-moon text-sm"></i>
+                </button>
+
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50">
+                    <span class="w-2 h-2 mr-1.5 bg-emerald-500 rounded-full animate-pulse"></span> Gemini AI Online
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Section -->
+    <main class="max-w-6xl mx-auto px-4 py-6 w-full flex-grow">
+        
+        <!-- Controls & Options Bar -->
+        <div class="bg-white dark:bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 mb-4 flex flex-wrap items-center justify-between gap-4 transition-colors">
+            <!-- Language Switcher Bar -->
+            <div class="flex items-center gap-2 sm:gap-4 w-full md:w-auto justify-between md:justify-start">
+                <!-- Source Lang Select -->
+                <div class="relative min-w-[130px]">
+                    <select id="sourceLang" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-sm rounded-xl px-3 py-2.5 appearance-none focus:outline-none focus:ring-2 focus:ring-fuchsia-500 cursor-pointer">
+                        <option value="id">Indonesia</option>
+                        <option value="en">Inggris</option>
+                        <option value="auto">Deteksi Otomatis</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-3 top-3.5 text-xs text-slate-400 pointer-events-none"></i>
+                </div>
+
+                <!-- Swap Button -->
+                <button id="swapLangBtn" class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition flex items-center justify-center focus:outline-none active:scale-95" title="Tukar Bahasa">
+                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                </button>
+
+                <!-- Target Lang Select -->
+                <div class="relative min-w-[130px]">
+                    <select id="targetLang" class="w-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-sm rounded-xl px-3 py-2.5 appearance-none focus:outline-none focus:ring-2 focus:ring-fuchsia-500 cursor-pointer">
+                        <option value="en">Inggris</option>
+                        <option value="id">Indonesia</option>
+                    </select>
+                    <i class="fa-solid fa-chevron-down absolute right-3 top-3.5 text-xs text-slate-400 pointer-events-none"></i>
+                </div>
+            </div>
+
+            <!-- Translation Tone / Style -->
+            <div class="flex items-center space-x-2 w-full md:w-auto justify-end">
+                <label for="toneStyle" class="text-xs font-semibold text-slate-500 dark:text-slate-400 whitespace-nowrap"><i class="fa-solid fa-wand-magic-sparkles text-fuchsia-500 mr-1"></i> Gaya Bahasa:</label>
+                <select id="toneStyle" class="bg-fuchsia-50 dark:bg-fuchsia-950/40 border border-fuchsia-200 dark:border-fuchsia-800/50 text-fuchsia-900 dark:text-fuchsia-200 font-medium text-xs rounded-xl px-3 py-2 focus:outline-none focus:ring-2 focus:ring-fuchsia-500 cursor-pointer">
+                    <option value="standar">Standar / Alami</option>
+                    <option value="formal">Formal / Resmi</option>
+                    <option value="santai">Santai / Percakapan</option>
+                    <option value="bisnis">Bisnis / Profesional</option>
+                    <option value="gaul">Gaul / Modern Slang</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Translation Boxes Container -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <!-- Source Input Box -->
+            <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl shadow-sm p-4 flex flex-col justify-between h-[320px] focus-within:border-fuchsia-500 focus-within:ring-1 focus-within:ring-fuchsia-500 transition">
+                <div class="w-full flex-grow flex flex-col">
+                    <textarea id="inputText" class="w-full flex-grow resize-none border-0 focus:outline-none bg-transparent text-slate-800 dark:text-slate-100 placeholder-slate-400 text-base custom-scrollbar" placeholder="Ketik atau tempel teks di sini..."></textarea>
+                </div>
+                
+                <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs">
+                    <div class="flex items-center space-x-2">
+                        <button id="clearInputBtn" class="hover:text-red-500 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Hapus teks">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                        <button id="speechInputBtn" class="hover:text-fuchsia-500 p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition" title="Bicara (Mic)">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span id="charCount" class="text-slate-400 dark:text-slate-500">0/2000</span>
+                        <button id="translateBtn" class="bg-gradient-to-r from-fuchsia-600 to-indigo-600 hover:from-fuchsia-500 hover:to-indigo-500 text-white font-semibold px-4 py-2 rounded-xl shadow-md shadow-fuchsia-500/20 transition flex items-center space-x-2 active:scale-95">
+                            <span>Terjemahkan</span>
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Target Output Box -->
+            <div class="bg-slate-900 dark:bg-slate-950 text-white border border-slate-800 dark:border-slate-800 rounded-2xl shadow-sm p-4 flex flex-col justify-between h-[320px] relative overflow-hidden">
+                
+                <!-- Loading State Overlay -->
+                <div id="loadingOverlay" class="absolute inset-0 bg-slate-900/90 dark:bg-slate-950/90 backdrop-blur-sm hidden flex-col items-center justify-center z-10 space-y-3">
+                    <div class="w-10 h-10 border-4 border-fuchsia-500 border-t-transparent rounded-full animate-spin"></div>
+                    <p class="text-xs text-fuchsia-400 font-medium animate-pulse">Memproses terjemahan AI...</p>
+                </div>
+
+                <div class="w-full flex-grow flex flex-col">
+                    <div id="outputText" class="w-full flex-grow overflow-y-auto text-slate-200 text-base custom-scrollbar whitespace-pre-wrap select-text">
+                        <span class="text-slate-500 italic text-sm">Hasil terjemahan pintar akan muncul di sini...</span>
+                    </div>
+                </div>
+                
+                <div class="flex items-center justify-between pt-3 border-t border-slate-800 text-slate-400 text-xs">
+                    <div class="flex items-center space-x-2">
+                        <button id="speakOutputBtn" class="hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition" title="Dengarkan Suara">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                        <button id="copyOutputBtn" class="hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition" title="Salin Teks">
+                            <i class="fa-regular fa-copy"></i>
+                        </button>
+                    </div>
+
+                    <!-- WhatsApp Share Button -->
+                    <button id="sendWhatsappBtn" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-3 py-1.5 rounded-xl transition flex items-center space-x-2 shadow-md shadow-emerald-900/40 active:scale-95">
+                        <i class="fa-brands fa-whatsapp text-lg"></i>
+                        <span>Kirim ke WA</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Additional Smart AI Explanation Box -->
+        <div id="explanationContainer" class="mt-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm hidden transition-colors">
+            <h3 class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2 flex items-center">
+                <i class="fa-solid fa-lightbulb text-amber-500 mr-2"></i> Penjelasan AI & Nuansa
+            </h3>
+            <p id="explanationText" class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed"></p>
+        </div>
+
+    </main>
+
+    <!-- Modal for WhatsApp Number -->
+    <div id="waModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full p-5 shadow-xl border border-slate-100 dark:border-slate-800 space-y-4 transition-colors">
+            <div class="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
+                <h3 class="font-bold text-slate-900 dark:text-white flex items-center text-sm">
+                    <i class="fa-brands fa-whatsapp text-emerald-500 text-lg mr-2"></i> Bagikan ke WhatsApp
+                </h3>
+                <button id="closeWaModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            
+            <p class="text-xs text-slate-600 dark:text-slate-400">
+                Pilih cara pengiriman terjemahan ke WhatsApp:
+            </p>
+
+            <div class="space-y-3">
+                <button id="waDirectShareBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 px-4 rounded-xl text-xs flex items-center justify-center space-x-2 transition">
+                    <i class="fa-solid fa-share"></i>
+                    <span>Pilih Kontak / Grup WA</span>
+                </button>
+
+                <div class="relative flex py-1 items-center">
+                    <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+                    <span class="flex-shrink mx-2 text-[10px] text-slate-400 dark:text-slate-500 uppercase">Atau ke nomor tertentu</span>
+                    <div class="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+                </div>
+
+                <div>
+                    <label class="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">Nomor WhatsApp Tujuan:</label>
+                    <input type="tel" id="waPhoneInput" placeholder="Contoh: 628123456789" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white rounded-xl px-3 py-2 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none">
+                </div>
+
+                <button id="waSendSpecificBtn" class="w-full bg-slate-900 dark:bg-slate-800 hover:bg-slate-800 dark:hover:bg-slate-700 text-white font-medium py-2.5 px-4 rounded-xl text-xs flex items-center justify-center space-x-2 transition">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    <span>Kirim Langsung</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 dark:bg-slate-800 text-white text-xs px-4 py-3 rounded-xl shadow-lg border border-slate-800 dark:border-slate-700 transition transform translate-y-20 opacity-0 z-50 flex items-center space-x-2">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span id="toastMsg">Pesan Toast</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 py-4 text-center text-xs text-slate-400 dark:text-slate-500 transition-colors">
+        <p>&copy; Translate Pintar Indonesia (TPI) &bull; Ditenagai oleh Google Gemini AI</p>
+    </footer>
+
+    <!-- App Logic -->
+    <script>
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                themeIcon.className = 'fa-solid fa-sun text-amber-400 text-sm';
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeIcon.className = 'fa-solid fa-moon text-slate-600 text-sm';
+            }
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                themeIcon.className = 'fa-solid fa-moon text-slate-600 text-sm';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                themeIcon.className = 'fa-solid fa-sun text-amber-400 text-sm';
+            }
+        });
+
+        initTheme();
+
+        // State variables
+        let translatedResultText = "";
+        let explanationResultText = "";
+
+        // Elements
+        const inputText = document.getElementById('inputText');
+        const outputText = document.getElementById('outputText');
+        const sourceLang = document.getElementById('sourceLang');
+        const targetLang = document.getElementById('targetLang');
+        const swapLangBtn = document.getElementById('swapLangBtn');
+        const toneStyle = document.getElementById('toneStyle');
+        const translateBtn = document.getElementById('translateBtn');
+        const clearInputBtn = document.getElementById('clearInputBtn');
+        const speechInputBtn = document.getElementById('speechInputBtn');
+        const speakOutputBtn = document.getElementById('speakOutputBtn');
+        const copyOutputBtn = document.getElementById('copyOutputBtn');
+        const charCount = document.getElementById('charCount');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const sendWhatsappBtn = document.getElementById('sendWhatsappBtn');
+        const explanationContainer = document.getElementById('explanationContainer');
+        const explanationText = document.getElementById('explanationText');
+
+        // Modal Elements
+        const waModal = document.getElementById('waModal');
+        const closeWaModalBtn = document.getElementById('closeWaModalBtn');
+        const waDirectShareBtn = document.getElementById('waDirectShareBtn');
+        const waSendSpecificBtn = document.getElementById('waSendSpecificBtn');
+        const waPhoneInput = document.getElementById('waPhoneInput');
+
+        // Toast Helper
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            const toastIcon = document.getElementById('toastIcon');
+
+            toastMsg.textContent = message;
+            if(isError) {
+                toastIcon.className = "fa-solid fa-circle-exclamation text-red-400";
+            } else {
+                toastIcon.className = "fa-solid fa-circle-check text-emerald-400";
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Character counter
+        inputText.addEventListener('input', () => {
+            const length = inputText.value.length;
+            charCount.textContent = `${length}/2000`;
+            if (length > 2000) {
+                inputText.value = inputText.value.substring(0, 2000);
+            }
+        });
+
+        // Swap Languages
+        swapLangBtn.addEventListener('click', () => {
+            if (sourceLang.value === 'auto') {
+                sourceLang.value = 'en';
+            }
+            const temp = sourceLang.value;
+            sourceLang.value = targetLang.value;
+            targetLang.value = temp;
+
+            // If there is output, put it into input
+            if (translatedResultText) {
+                inputText.value = translatedResultText;
+                outputText.innerHTML = '<span class="text-slate-500 italic text-sm">Hasil terjemahan pintar akan muncul di sini...</span>';
+                translatedResultText = "";
+                explanationContainer.classList.add('hidden');
+            }
+        });
+
+        // Clear input
+        clearInputBtn.addEventListener('click', () => {
+            inputText.value = "";
+            charCount.textContent = "0/2000";
+            outputText.innerHTML = '<span class="text-slate-500 italic text-sm">Hasil terjemahan pintar akan muncul di sini...</span>';
+            translatedResultText = "";
+            explanationContainer.classList.add('hidden');
+        });
+
+        // Speech Recognition (Input Mic)
+        speechInputBtn.addEventListener('click', () => {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                showToast("Fitur pengenal suara tidak didukung browser ini.", true);
+                return;
+            }
+
+            const recognition = new SpeechRecognition();
+            recognition.lang = sourceLang.value === 'en' ? 'en-US' : 'id-ID';
+            recognition.interimResults = false;
+
+            recognition.onstart = () => {
+                speechInputBtn.classList.add('text-red-500', 'animate-pulse');
+                showToast("Mendengarkan suara...");
+            };
+
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                inputText.value += (inputText.value ? " " : "") + transcript;
+                charCount.textContent = `${inputText.value.length}/2000`;
+            };
+
+            recognition.onerror = () => {
+                showToast("Gagal merekam suara.", true);
+            };
+
+            recognition.onend = () => {
+                speechInputBtn.classList.remove('text-red-500', 'animate-pulse');
+            };
+
+            recognition.start();
+        });
+
+        // Text-to-Speech (Output Audio)
+        speakOutputBtn.addEventListener('click', () => {
+            if (!translatedResultText) {
+                showToast("Belum ada hasil terjemahan.", true);
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance(translatedResultText);
+            utterance.lang = targetLang.value === 'en' ? 'en-US' : 'id-ID';
+            window.speechSynthesis.speak(utterance);
+        });
+
+        // Copy Text
+        copyOutputBtn.addEventListener('click', () => {
+            if (!translatedResultText) {
+                showToast("Tidak ada teks untuk disalin.", true);
+                return;
+            }
+            
+            // Clipboard fallback
+            const tempInput = document.createElement("textarea");
+            tempInput.value = translatedResultText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand("copy");
+            document.body.removeChild(tempInput);
+
+            showToast("Terjemahan berhasil disalin!");
+        });
+
+        // AI Translation Call via Gemini API
+        async function performTranslation() {
+            const text = inputText.value.trim();
+            if (!text) {
+                showToast("Masukkan teks yang ingin diterjemahkan.", true);
+                return;
+            }
+
+            loadingOverlay.classList.remove('hidden');
+            loadingOverlay.classList.add('flex');
+
+            const sourceLangName = sourceLang.value === 'id' ? 'Bahasa Indonesia' : (sourceLang.value === 'en' ? 'Bahasa Inggris' : 'Otodetek Bahasa');
+            const targetLangName = targetLang.value === 'en' ? 'Bahasa Inggris' : 'Bahasa Indonesia';
+            const selectedTone = toneStyle.value;
+
+            const systemPrompt = `Anda adalah sistem penerjemah AI profesional tingkat lanjut (Translate Pintar). 
+Tugas Anda adalah menerjemahkan teks dari ${sourceLangName} ke ${targetLangName}.
+Aturan Penerjemahan:
+1. Sesuaikan dengan gaya bahasa: ${selectedTone.toUpperCase()}.
+2. Pertahankan nuansa konteks asli, kiasan, dan tata bahasa yang tepat.
+3. Berikan output dalam format JSON terstruktur yang ketat tanpa markdown lain agar mudah diproses:
+{
+  "translation": "hasil terjemahan utama",
+  "explanation": "catatan singkat atau penjelasan nuansa kata jika ada, atau kosongkan jika tidak diperlukan"
+}`;
+
+            const payload = {
+                contents: [
+                    {
+                        parts: [
+                            { text: `Tunjukkan terjemahan terbaik untuk teks berikut:\n"${text}"` }
+                        ]
+                    }
+                ],
+                systemInstruction: {
+                    parts: [{ text: systemPrompt }]
+                },
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            };
+
+            const apiKey = ""; // Disiapkan otomatis oleh Canvas / Gemini Platform
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Gagal menghubungi AI Server');
+                }
+
+                const data = await response.json();
+                const jsonText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                if (jsonText) {
+                    const parsed = JSON.parse(jsonText);
+                    translatedResultText = parsed.translation || "";
+                    explanationResultText = parsed.explanation || "";
+
+                    outputText.textContent = translatedResultText;
+
+                    if (explanationResultText) {
+                        explanationText.textContent = explanationResultText;
+                        explanationContainer.classList.remove('hidden');
+                    } else {
+                        explanationContainer.classList.add('hidden');
+                    }
+                } else {
+                    throw new Error('Format data tidak terduga');
+                }
+
+            } catch (err) {
+                console.error(err);
+                showToast("Terjadi kesalahan saat menerjemahkan.", true);
+                outputText.innerHTML = '<span class="text-red-400">Gagal menerjemahkan teks. Silakan coba lagi.</span>';
+            } finally {
+                loadingOverlay.classList.add('hidden');
+                loadingOverlay.classList.remove('flex');
+            }
+        }
+
+        translateBtn.addEventListener('click', performTranslation);
+
+        // WhatsApp Modal Trigger
+        sendWhatsappBtn.addEventListener('click', () => {
+            if (!translatedResultText) {
+                showToast("Lakukan terjemahan terlebih dahulu.", true);
+                return;
+            }
+            waModal.classList.remove('hidden');
+        });
+
+        closeWaModalBtn.addEventListener('click', () => {
+            waModal.classList.add('hidden');
+        });
+
+        // WhatsApp Direct Share
+        waDirectShareBtn.addEventListener('click', () => {
+            const formattedMsg = encodeURIComponent(`*Translate Pintar AI*\n\n*Teks Asli:* ${inputText.value.trim()}\n\n*Terjemahan:* ${translatedResultText}`);
+            window.open(`https://api.whatsapp.com/send?text=${formattedMsg}`, '_blank');
+            waModal.classList.add('hidden');
+        });
+
+        // WhatsApp Direct Number Share
+        waSendSpecificBtn.addEventListener('click', () => {
+            let phone = waPhoneInput.value.replace(/[^0-9]/g, '');
+            if (!phone) {
+                showToast("Masukkan nomor WhatsApp penerima.", true);
+                return;
+            }
+            if (phone.startsWith('0')) {
+                phone = '62' + phone.slice(1);
+            }
+
+            const formattedMsg = encodeURIComponent(`*Translate Pintar AI*\n\n*Teks Asli:* ${inputText.value.trim()}\n\n*Terjemahan:* ${translatedResultText}`);
+            window.open(`https://api.whatsapp.com/send?phone=${phone}&text=${formattedMsg}`, '_blank');
+            waModal.classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
